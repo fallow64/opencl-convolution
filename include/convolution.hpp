@@ -20,7 +20,7 @@ struct Engine {
 };
 
 // Initialises OpenCL and builds the kernels
-Engine make_engine(const std::string &kernel_path = "kernels.cl");
+Engine make_engine();
 
 // Direct convolution via the GPU direct kernel
 void convolve_direct(Engine &eng, const std::vector<float> &input, const std::vector<float> &h,

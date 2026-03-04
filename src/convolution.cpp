@@ -1,17 +1,7 @@
 #include "convolution.hpp"
+#include "kernels_embed.h"
 #include <cstdlib>
-#include <fstream>
 #include <iostream>
-
-// Reads the entire contents of a file into a string
-static std::string read_file(const std::string &path) {
-    std::ifstream f(path);
-    if (!f.is_open()) {
-        std::cerr << "Failed to open: " << path << std::endl;
-        exit(1);
-    }
-    return std::string((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
-}
 
 // Returns the next power of 2 greater than or equal to n
 static int nextPow2(int n) {
@@ -31,7 +21,7 @@ static int ilog2(int n) {
     return l;
 }
 
-Engine make_engine(const std::string &kernel_path) {
+Engine make_engine() {
     std::vector<cl::Platform> platforms;
     cl::Platform::get(&platforms);
     cl::Platform platform = platforms[0];
@@ -48,7 +38,7 @@ Engine make_engine(const std::string &kernel_path) {
     cl::Context context(device);
     cl::CommandQueue queue(context, device);
 
-    cl::Program program(context, read_file(kernel_path));
+    cl::Program program(context, std::string(reinterpret_cast<const char *>(kernels_cl), kernels_cl_len));
     if (program.build(device) != CL_SUCCESS) {
         std::cerr << "Build error:" << std::endl
                   << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device) << std::endl;
