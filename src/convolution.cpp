@@ -38,7 +38,8 @@ Engine make_engine() {
     cl::Context context(device);
     cl::CommandQueue queue(context, device);
 
-    cl::Program program(context, std::string(reinterpret_cast<const char *>(kernels_cl), kernels_cl_len));
+    cl::Program program(context,
+                        std::string(reinterpret_cast<const char *>(kernels_cl), kernels_cl_len));
     if (program.build(device) != CL_SUCCESS) {
         std::cerr << "Build error:" << std::endl
                   << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device) << std::endl;
@@ -128,12 +129,14 @@ void convolve_fft(Engine &eng, const std::vector<float> &input,
     int padH = nextPow2(inH + kH - 1);
     int padN = padW * padH;
 
+    // Copy vectors into OpenCL buffers
     cl::Buffer inputBuf(eng.context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                         sizeof(float) * input.size(), const_cast<float *>(input.data()));
     cl::Buffer kernelBuf(eng.context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
                          sizeof(float) * kernel_data.size(),
                          const_cast<float *>(kernel_data.data()));
 
+    // Complex buffers for FFT
     cl::Buffer inputC(eng.context, CL_MEM_READ_WRITE, sizeof(cl_float2) * padN);
     cl::Buffer kernelC(eng.context, CL_MEM_READ_WRITE, sizeof(cl_float2) * padN);
     cl::Buffer resultC(eng.context, CL_MEM_READ_WRITE, sizeof(cl_float2) * padN);
@@ -182,7 +185,7 @@ void convolve_fft(Engine &eng, const std::vector<float> &input,
     eng.extract_normalize_k.setArg(7, scale);
     eng.queue.enqueueNDRangeKernel(eng.extract_normalize_k, cl::NullRange, cl::NDRange(inW, inH));
 
-    // Read back the result (and block until ready)
+    // Read back the result and block until ready
     output.resize(inW * inH);
     eng.queue.enqueueReadBuffer(outputBuf, CL_TRUE, 0, sizeof(float) * output.size(),
                                 output.data());
