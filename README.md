@@ -16,4 +16,4 @@ cmake --build build
 
 The `test` executable runs a series of convolution benchmarks with different inputs and kernels. It will then print out a CSV report to stdout.
 
-The report used in the slides is included in `report.csv`.
+The report used in the slides is included in `report.csv` (ran on an Apple Macbook Pro M4).
