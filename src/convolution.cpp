@@ -150,7 +150,7 @@ void convolve_fft(Engine &eng, const std::vector<float> &input,
 
     auto fill_complex = [&](cl::Buffer &src, cl::Buffer &dst, int srcW, int srcH) {
         // Converts a real (srcW x srcH) buffer to complex (padW x padH),
-        // zero-padding as needed.
+        // also zero-padding as needed.
         eng.real_to_complex_k.setArg(0, src);
         eng.real_to_complex_k.setArg(1, dst);
         eng.real_to_complex_k.setArg(2, srcW);

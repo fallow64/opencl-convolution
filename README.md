@@ -4,9 +4,13 @@ A comparison of direct vs FFT-based convolution using OpenCL.
 
 ## Building
 
-Requires the OpenCL headers and libraries, and a C++11 compiler.
+This program requires the OpenCL headers and libraries, a C++ compiler, and CMake.
 
-To build, run `make` in the project root. This will produce an executable `test` in the `build/` directory.
+To build:
+```sh
+cmake -B build
+cmake --build build
+```
 
 ## Running
 
